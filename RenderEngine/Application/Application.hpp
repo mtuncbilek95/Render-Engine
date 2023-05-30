@@ -60,22 +60,34 @@ protected:
     bool CheckDeviceExtensionSupport(VkPhysicalDevice device);
     bool IsDeviceSuitable(VkPhysicalDevice device);
     QueueFamilyIndices  FindQueueFamilies(VkPhysicalDevice device);
+    SwapchainSupportDetails QuerySwapchainSupport(VkPhysicalDevice device);
     std::vector<const char*> GetRequiredExtensions();
+    VkSurfaceFormatKHR ChooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);
+    VkPresentModeKHR ChooseSwapPresentMode(const std::vector<VkPresentModeKHR> availablePresentModes);
+    VkExtent2D ChooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities);
 private:
     GLFWwindow *m_Window;
     VkExtent2D m_WindowSize;
 
-    VkSurfaceKHR m_Surface;
-    VkSwapchainKHR m_Swapchain;
+private:
+    std::vector<VkImage> m_SwapchainImages;
+    VkFormat m_SwapchainImageFormat;
+    VkExtent2D m_SwapchainExtent;
 
 private:
     VkInstance m_Instance;
     VkPhysicalDevice m_PhysicalDevice;
     VkDevice m_Device;
 
+private:
+    VkSurfaceKHR m_Surface;
+    VkSwapchainKHR m_Swapchain;
+
+private:
     VkQueue m_GraphicsQueue;
     VkQueue m_PresentQueue;
 
+private:
     const std::vector<const char*> deviceExtensions = {
             VK_KHR_SWAPCHAIN_EXTENSION_NAME,
     };
