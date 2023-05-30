@@ -38,6 +38,10 @@ void Application::MainLoop() {
 }
 
 void Application::Cleanup() {
+    for (auto imageView : m_SwapchainImageViews) {
+        vkDestroyImageView(m_Device, imageView, nullptr);
+    }
+
     vkDestroySwapchainKHR(m_Device, m_Swapchain, nullptr);
     vkDestroyDevice(m_Device, nullptr);
 
@@ -107,13 +111,8 @@ void Application::CreateInstance() {
 }
 
 void Application::CreateSurface() {
-    VkWin32SurfaceCreateInfoKHR createInfo{};
-    createInfo.sType = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR;
-    createInfo.hwnd = glfwGetWin32Window(m_Window);
-    createInfo.hinstance = GetModuleHandle(nullptr);
 
-
-    if (vkCreateWin32SurfaceKHR(m_Instance, &createInfo, nullptr, &m_Surface) != VK_SUCCESS)
+    if (glfwCreateWindowSurface(m_Instance, m_Window, nullptr, &m_Surface) != VK_SUCCESS)
         throw std::runtime_error("Failed to create Window Surface!");
     else
         std::cout << "\033[0;36mSuccessfully created Window Surface!\033[0;37m" << std::endl;
@@ -167,7 +166,9 @@ void Application::CreateLogicalDevice() {
     createInfo.pQueueCreateInfos = queueCreateInfos.data();
 
     createInfo.pEnabledFeatures = &deviceFeatures;
-    createInfo.enabledExtensionCount = 0;
+
+    createInfo.enabledExtensionCount = static_cast<uint32_t>(deviceExtensions.size());
+    createInfo.ppEnabledExtensionNames = deviceExtensions.data();
 
     if (ValidationLayer::GetInstance().IsValidationLayerEnabled()) {
         createInfo.enabledLayerCount = static_cast<uint32_t>(ValidationLayer::GetInstance().GetValidationLayers().size());
@@ -216,9 +217,6 @@ void Application::CreateSwapchain() {
         createInfo.pQueueFamilyIndices = queueFamilyIndices;
     } else {
         createInfo.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE;
-
-        createInfo.queueFamilyIndexCount = 0; // Optional
-        createInfo.pQueueFamilyIndices = nullptr; // Optional
     }
 
     createInfo.preTransform = swapchainSupport.capabilities.currentTransform;
@@ -242,6 +240,27 @@ void Application::CreateSwapchain() {
 }
 
 void Application::CreateImageViews() {
+    m_SwapchainImageViews.resize(m_SwapchainImages.size());
+
+    for(size_t i = 0; i < m_SwapchainImages.size(); ++i){
+        VkImageViewCreateInfo createInfo{};
+        createInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+        createInfo.image = m_SwapchainImages[i];
+        createInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
+        createInfo.format = m_SwapchainImageFormat;
+        createInfo.components.r = VK_COMPONENT_SWIZZLE_IDENTITY;
+        createInfo.components.g = VK_COMPONENT_SWIZZLE_IDENTITY;
+        createInfo.components.b = VK_COMPONENT_SWIZZLE_IDENTITY;
+        createInfo.components.a = VK_COMPONENT_SWIZZLE_IDENTITY;
+        createInfo.subresourceRange.aspectMask =VK_IMAGE_ASPECT_COLOR_BIT;
+        createInfo.subresourceRange.baseMipLevel = 0;
+        createInfo.subresourceRange.levelCount = 1;
+        createInfo.subresourceRange.baseArrayLayer = 0;
+        createInfo.subresourceRange.layerCount = 1;
+
+        if(vkCreateImageView(m_Device, &createInfo, nullptr, &m_SwapchainImageViews[i]) != VK_SUCCESS)
+            throw std::runtime_error("Failed to create Image Views!");
+    }
 
 }
 
@@ -314,11 +333,9 @@ QueueFamilyIndices Application::FindQueueFamilies(VkPhysicalDevice device) {
         if (queueFamilies[i].queueFlags & VK_QUEUE_GRAPHICS_BIT)
             indices.graphicsFamily = static_cast<uint32_t>(i);
 
-        VkBool32 presentSupport{};
+        VkBool32 presentSupport = false;
         vkGetPhysicalDeviceSurfaceSupportKHR(device, static_cast<uint32_t>(i), m_Surface, &presentSupport);
 
-        if (presentSupport)
-            indices.presentFamily = static_cast<uint32_t>(i);
         if (presentSupport)
             indices.presentFamily = static_cast<uint32_t>(i);
         if (indices.IsComplete())
