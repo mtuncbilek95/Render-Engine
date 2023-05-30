@@ -71,6 +71,9 @@ private:
     VkPhysicalDevice m_PhysicalDevice;
     VkDevice m_Device;
 
+    VkQueue m_GraphicsQueue;
+    VkQueue m_PresentQueue;
+    
     const std::vector<const char*> deviceExtensions = {
             VK_KHR_SWAPCHAIN_EXTENSION_NAME,
     };
