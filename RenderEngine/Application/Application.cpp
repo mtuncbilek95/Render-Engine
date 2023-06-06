@@ -62,7 +62,6 @@ void Application::InitVulkan() {
     CreateLogicalDevice();
     CreateSwapchain();
     CreateImageViews();
-    CreateRenderPass();
     CreateGraphicsPipeline();
     CreateFrameBuffers();
     CreateCommandPool();
@@ -265,10 +264,6 @@ void Application::CreateImageViews() {
         if(vkCreateImageView(m_Device, &createInfo, nullptr, &m_SwapchainImageViews[i]) != VK_SUCCESS)
             throw std::runtime_error("Failed to create Image Views!");
     }
-
-}
-
-void Application::CreateRenderPass() {
 
 }
 

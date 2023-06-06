@@ -4,8 +4,8 @@
 #include <GLFW/glfw3.h>
 
 #include <vector>
-#include <stdexcept>
 #include <iostream>
+#include <stdexcept>
 
 class ValidationLayer {
 public:

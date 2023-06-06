@@ -49,7 +49,6 @@ protected:
     void CreateLogicalDevice();
     void CreateSwapchain();
     void CreateImageViews();
-    void CreateRenderPass();
     void CreateGraphicsPipeline();
     void CreateFrameBuffers();
     void CreateCommandPool();

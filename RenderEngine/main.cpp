@@ -1,6 +1,6 @@
 #include <Application/Application.hpp>
 
-int main() {
+int main(int argc, char** argv) {
     Application app({ 1280, 720 });
     app.Run();
 

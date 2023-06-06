@@ -1,5 +1,7 @@
 #include "ValidationLayer.hpp"
 
+
+
 ValidationLayer *ValidationLayer::instance = nullptr;
 
 ValidationLayer::ValidationLayer() : debugMessenger(nullptr) {
