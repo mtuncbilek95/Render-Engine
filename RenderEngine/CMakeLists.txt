@@ -12,3 +12,5 @@ target_include_directories(${PROJECT_NAME} PUBLIC "C:/VulkanSDK/1.3.246.1/Includ
 
 target_link_libraries(${PROJECT_NAME} "C:/VulkanSDK/1.3.246.1/Lib/vulkan-1.lib")
 target_link_libraries(${PROJECT_NAME} "${CMAKE_SOURCE_DIR}/External/GLFW/Lib/glfw3.lib")
+
+add_compile_definitions("RENDER_ROOT=${CMAKE_SOURCE_DIR}")

@@ -1,5 +1,8 @@
 #pragma once
 
+#include <string>
+#include <vector>
+
 class FileReader {
 public:
     static FileReader& GetInstance(){
@@ -8,7 +11,7 @@ public:
         return *m_Instance;
     }
 
-
+    std::vector<char> ReadShaderFile(std::string path);
 private:
     static FileReader* m_Instance;
 };

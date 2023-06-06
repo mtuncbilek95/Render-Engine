@@ -58,12 +58,16 @@ protected:
 protected:
     bool CheckDeviceExtensionSupport(VkPhysicalDevice device);
     bool IsDeviceSuitable(VkPhysicalDevice device);
+
     QueueFamilyIndices  FindQueueFamilies(VkPhysicalDevice device);
     SwapchainSupportDetails QuerySwapchainSupport(VkPhysicalDevice device);
     std::vector<const char*> GetRequiredExtensions();
+
     VkSurfaceFormatKHR ChooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);
     VkPresentModeKHR ChooseSwapPresentMode(const std::vector<VkPresentModeKHR> availablePresentModes);
     VkExtent2D ChooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities);
+
+    VkShaderModule CreateShaderModule(const std::vector<char>& code);
 private:
     GLFWwindow *m_Window;
     VkExtent2D m_WindowSize;
@@ -87,6 +91,11 @@ private:
 private:
     VkQueue m_GraphicsQueue;
     VkQueue m_PresentQueue;
+
+private:
+    VkPipelineLayout m_PipelineLayout;
+    VkRenderPass m_RenderPass;
+    VkPipeline m_GraphicsPipeline;
 
 private:
     const std::vector<const char*> deviceExtensions = {
