@@ -41,15 +41,14 @@ protected:
     void DrawFrame();
 protected:
     void InitVulkan();
-    // Create an instance of the Vulkan API. This instance is used to interface with the Vulkan library.
     void CreateInstance();
     void CreateSurface();
-    // Count the number of physical devices that support the Vulkan API. Store all the devices in a list. Select the best device that suits our needs.
     void PickPhysicalDevice();
     void CreateLogicalDevice();
     void CreateSwapchain();
     void CreateImageViews();
     void CreateGraphicsPipeline();
+    void CreateRenderPass();
     void CreateFrameBuffers();
     void CreateCommandPool();
     void CreateCommandBuffers();

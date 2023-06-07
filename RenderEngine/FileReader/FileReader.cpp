@@ -1,6 +1,7 @@
 #include "FileReader.hpp"
 
 #include <fstream>
+#include <iostream>
 
 #define STRING(x) #x"/"
 #define XSTRING(x) STRING(x)
@@ -9,6 +10,7 @@ FileReader* FileReader::m_Instance = nullptr;
 
 std::vector<char> FileReader::ReadShaderFile(std::string path) {
     std::string shaderPath = XSTRING(RENDER_ROOT) + path;
+    std::cout << shaderPath << std::endl;
 
     std::ifstream file(shaderPath, std::ios::ate | std::ios::binary);
 
