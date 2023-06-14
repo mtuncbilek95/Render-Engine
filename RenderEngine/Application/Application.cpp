@@ -14,6 +14,9 @@ Application::Application(VkExtent2D windowSize) : m_WindowSize(windowSize), m_Wi
 
 Application::~Application() {
     Cleanup();
+
+    FileReader::GetInstance().DeleteShaderFile("Shaders/SimpleVertex.spv");
+    FileReader::GetInstance().DeleteShaderFile("Shaders/SimpleFragment.spv");
 }
 
 void Application::Run() {
@@ -42,9 +45,13 @@ void Application::MainLoop() {
 }
 
 void Application::Cleanup() {
+    vkDestroySemaphore(m_Device, m_RenderFinishedSemaphore, nullptr);
+    vkDestroySemaphore(m_Device, m_ImageAvailableSemaphore, nullptr);
+    vkDestroyFence(m_Device, m_InFlightFence, nullptr);
+
     vkDestroyCommandPool(m_Device, m_CommandPool, nullptr);
 
-    for(auto& framebuffer: m_SwapchainFrameBuffers) {
+    for (auto &framebuffer: m_SwapchainFrameBuffers) {
         vkDestroyFramebuffer(m_Device, framebuffer, nullptr);
     }
 
@@ -476,7 +483,7 @@ void Application::CreateFrameBuffers() {
         framebufferCreateInfo.height = m_SwapchainExtent.height;
         framebufferCreateInfo.layers = 1;
 
-        if(vkCreateFramebuffer(m_Device, &framebufferCreateInfo, nullptr, &m_SwapchainFrameBuffers[i]) != VK_SUCCESS)
+        if (vkCreateFramebuffer(m_Device, &framebufferCreateInfo, nullptr, &m_SwapchainFrameBuffers[i]) != VK_SUCCESS)
             throw std::runtime_error("Failed to create Framebuffer!");
     }
 }
@@ -489,7 +496,7 @@ void Application::CreateCommandPool() {
     commandPoolCreateInfo.queueFamilyIndex = queueFamilyIndices.graphicsFamily.value();
     commandPoolCreateInfo.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
 
-    if(vkCreateCommandPool(m_Device, &commandPoolCreateInfo, nullptr, &m_CommandPool) != VK_SUCCESS)
+    if (vkCreateCommandPool(m_Device, &commandPoolCreateInfo, nullptr, &m_CommandPool) != VK_SUCCESS)
         throw std::runtime_error("Failed to create Command Pool!");
     else
         std::cout << "\033[0;36mCommand Pool created successfully!\033[0;37m" << std::endl;
@@ -502,25 +509,25 @@ void Application::CreateCommandBuffers() {
     commandBufferAllocateInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
     commandBufferAllocateInfo.commandBufferCount = 1;
 
-    if(vkAllocateCommandBuffers(m_Device, &commandBufferAllocateInfo, &m_CommandBuffer) != VK_SUCCESS)
+    if (vkAllocateCommandBuffers(m_Device, &commandBufferAllocateInfo, &m_CommandBuffer) != VK_SUCCESS)
         throw std::runtime_error("Failed to allocate Command Buffers!");
     else
         std::cout << "\033[0;36mCommand Buffers allocated successfully!\033[0;37m" << std::endl;
 }
 
 void Application::CreateSyncObjects() {
-        VkSemaphoreCreateInfo semaphoreInfo{};
-        semaphoreInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
+    VkSemaphoreCreateInfo semaphoreInfo{};
+    semaphoreInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
 
-        VkFenceCreateInfo fenceInfo{};
-        fenceInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
-        fenceInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
+    VkFenceCreateInfo fenceInfo{};
+    fenceInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
+    fenceInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
 
-        if (vkCreateSemaphore(m_Device, &semaphoreInfo, nullptr, &m_ImageAvailableSemaphore) != VK_SUCCESS ||
-            vkCreateSemaphore(m_Device, &semaphoreInfo, nullptr, &m_RenderFinishedSemaphore) != VK_SUCCESS ||
-            vkCreateFence(m_Device, &fenceInfo, nullptr, &m_InFlightFence) != VK_SUCCESS) {
-            throw std::runtime_error("failed to create synchronization objects for a frame!");
-        }
+    if (vkCreateSemaphore(m_Device, &semaphoreInfo, nullptr, &m_ImageAvailableSemaphore) != VK_SUCCESS ||
+        vkCreateSemaphore(m_Device, &semaphoreInfo, nullptr, &m_RenderFinishedSemaphore) != VK_SUCCESS ||
+        vkCreateFence(m_Device, &fenceInfo, nullptr, &m_InFlightFence) != VK_SUCCESS) {
+        throw std::runtime_error("failed to create synchronization objects for a frame!");
+    }
 }
 
 void Application::DrawFrame() {
@@ -530,7 +537,7 @@ void Application::DrawFrame() {
     uint32_t imageIndex;
     vkAcquireNextImageKHR(m_Device, m_Swapchain, UINT64_MAX, m_ImageAvailableSemaphore, VK_NULL_HANDLE, &imageIndex);
 
-    vkResetCommandBuffer(m_CommandBuffer,0);
+    vkResetCommandBuffer(m_CommandBuffer, 0);
     RecordCommandBuffer(m_CommandBuffer, imageIndex);
 
     VkSubmitInfo submitInfo{};
@@ -549,7 +556,7 @@ void Application::DrawFrame() {
     submitInfo.signalSemaphoreCount = 1;
     submitInfo.pSignalSemaphores = signalSemaphores;
 
-    if(vkQueueSubmit(m_GraphicsQueue, 1, &submitInfo, m_InFlightFence) != VK_SUCCESS)
+    if (vkQueueSubmit(m_GraphicsQueue, 1, &submitInfo, m_InFlightFence) != VK_SUCCESS)
         throw std::runtime_error("Failed to submit draw command buffer!");
 
     VkPresentInfoKHR presentInfo{};
@@ -709,7 +716,7 @@ void Application::RecordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t im
     VkCommandBufferBeginInfo beginInfo{};
     beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
 
-    if(vkBeginCommandBuffer(commandBuffer, &beginInfo) != VK_SUCCESS)
+    if (vkBeginCommandBuffer(commandBuffer, &beginInfo) != VK_SUCCESS)
         throw std::runtime_error("Failed to begin recording Command Buffer!");
 
     VkRenderPassBeginInfo renderPassInfo{};
@@ -719,7 +726,7 @@ void Application::RecordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t im
     renderPassInfo.renderArea.offset = {0, 0};
     renderPassInfo.renderArea.extent = m_SwapchainExtent;
 
-    VkClearValue clearColor = {0.0f, 0.0f, 0.0f, 1.0f};
+    VkClearValue clearColor = {0.19f, 0.24f, 0.18f, 1.0f};
     renderPassInfo.clearValueCount = 1;
     renderPassInfo.pClearValues = &clearColor;
 
@@ -741,11 +748,11 @@ void Application::RecordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t im
     scissor.extent = m_SwapchainExtent;
     vkCmdSetScissor(commandBuffer, 0, 1, &scissor);
 
-    vkCmdDraw(commandBuffer, 3, 1, 0, 0);
+    vkCmdDraw(commandBuffer, 6, 1, 0, 0);
 
     vkCmdEndRenderPass(commandBuffer);
 
-    if(vkEndCommandBuffer(commandBuffer) != VK_SUCCESS)
+    if (vkEndCommandBuffer(commandBuffer) != VK_SUCCESS)
         throw std::runtime_error("Failed to record Command Buffer!");
 }
 

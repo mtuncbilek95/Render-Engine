@@ -12,6 +12,7 @@ public:
     }
 
     std::vector<char> ReadShaderFile(std::string path);
+    void DeleteShaderFile(std::string path);
 private:
     static FileReader* m_Instance;
 };
