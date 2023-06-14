@@ -67,6 +67,8 @@ protected:
     VkExtent2D ChooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities);
 
     VkShaderModule CreateShaderModule(const std::vector<char>& code);
+
+    void RecordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex);
 private:
     GLFWwindow *m_Window;
     VkExtent2D m_WindowSize;
@@ -74,6 +76,7 @@ private:
 private:
     std::vector<VkImage> m_SwapchainImages;
     std::vector<VkImageView> m_SwapchainImageViews;
+    std::vector<VkFramebuffer> m_SwapchainFrameBuffers;
 
     VkFormat m_SwapchainImageFormat;
     VkExtent2D m_SwapchainExtent;
@@ -95,6 +98,15 @@ private:
     VkPipelineLayout m_PipelineLayout;
     VkRenderPass m_RenderPass;
     VkPipeline m_GraphicsPipeline;
+
+private:
+    VkCommandPool m_CommandPool;
+    VkCommandBuffer m_CommandBuffer;
+
+private:
+    VkSemaphore m_ImageAvailableSemaphore;
+    VkSemaphore m_RenderFinishedSemaphore;
+    VkFence m_InFlightFence;
 
 private:
     const std::vector<const char*> deviceExtensions = {
