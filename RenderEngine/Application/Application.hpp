@@ -110,7 +110,8 @@ private:
 
 private:
     const std::vector<const char*> deviceExtensions = {
-            VK_KHR_SWAPCHAIN_EXTENSION_NAME
+            VK_KHR_SWAPCHAIN_EXTENSION_NAME,
+            VK_KHR_SHADER_CLOCK_EXTENSION_NAME
     };
 
 };

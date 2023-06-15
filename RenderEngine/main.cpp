@@ -1,7 +1,7 @@
 #include <Application/Application.hpp>
 
 int main(int argc, char** argv) {
-    Application app({ 1280, 720 });
+    Application app({ 1600, 900 });
     app.Run();
 
     return EXIT_SUCCESS;
