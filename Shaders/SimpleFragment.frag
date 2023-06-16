@@ -6,6 +6,8 @@ layout(location = 0) out vec4 outColor;
 #define MAX_DIST 500.
 #define SURF_DIST .001
 
+
+
 float sdBox( vec3 p, vec3 b )
 {
     vec3 q = abs(p) - b;

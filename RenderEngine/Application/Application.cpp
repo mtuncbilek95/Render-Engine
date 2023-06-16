@@ -186,18 +186,7 @@ void Application::CreateLogicalDevice() {
     }
 
     VkPhysicalDeviceFeatures deviceFeatures{};
-    deviceFeatures.geometryShader = VK_TRUE;
     deviceFeatures.shaderInt64 = VK_TRUE;
-
-    VkPhysicalDeviceShaderClockFeaturesKHR  clockFeatures{};
-    clockFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_CLOCK_FEATURES_KHR;
-    clockFeatures.shaderDeviceClock = VK_TRUE;
-    clockFeatures.shaderSubgroupClock = VK_TRUE;
-
-    VkPhysicalDeviceFeatures2 features2{};
-    features2.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2;
-    features2.pNext = &clockFeatures;
-    features2.features = deviceFeatures;
 
     VkDeviceCreateInfo createInfo{};
     createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
@@ -205,8 +194,7 @@ void Application::CreateLogicalDevice() {
     createInfo.queueCreateInfoCount = static_cast<uint32_t>(queueCreateInfos.size());
     createInfo.pQueueCreateInfos = queueCreateInfos.data();
 
-    createInfo.pEnabledFeatures = nullptr;
-    createInfo.pNext = &features2;
+    createInfo.pEnabledFeatures = &deviceFeatures;
 
     createInfo.enabledExtensionCount = static_cast<uint32_t>(deviceExtensions.size());
     createInfo.ppEnabledExtensionNames = deviceExtensions.data();
