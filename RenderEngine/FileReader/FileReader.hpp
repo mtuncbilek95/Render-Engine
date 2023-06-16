@@ -3,6 +3,13 @@
 #include <string>
 #include <vector>
 
+enum class ShaderType {
+    Vertex,
+    Geometry,
+    Compute,
+    Fragment
+};
+
 class FileReader {
 public:
     static FileReader& GetInstance(){
@@ -10,9 +17,10 @@ public:
             m_Instance = new FileReader();
         return *m_Instance;
     }
+    void CompileShader(std::string shaderName, std::string outName, ShaderType type);
+    std::vector<char> ReadShaderFile(std::string shaderName);
+    void DeleteShaderFile(std::string shaderName);
 
-    std::vector<char> ReadShaderFile(std::string path);
-    void DeleteShaderFile(std::string path);
 private:
     static FileReader* m_Instance;
 };

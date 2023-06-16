@@ -9,14 +9,15 @@
 
 Application::Application(VkExtent2D windowSize) : m_WindowSize(windowSize), m_Window(nullptr), m_Instance(nullptr),
                                                   m_PhysicalDevice(VK_NULL_HANDLE) {
-
+    FileReader::GetInstance().CompileShader("SimpleVertex","VertexShader",ShaderType::Vertex);
+    FileReader::GetInstance().CompileShader("SimpleFragment","FragShader",ShaderType::Fragment);
 }
 
 Application::~Application() {
     Cleanup();
 
-    FileReader::GetInstance().DeleteShaderFile("Shaders/SimpleVertex.spv");
-    FileReader::GetInstance().DeleteShaderFile("Shaders/SimpleFragment.spv");
+    FileReader::GetInstance().DeleteShaderFile("VertexShader");
+    FileReader::GetInstance().DeleteShaderFile("FragShader");
 }
 
 void Application::Run() {
@@ -305,8 +306,8 @@ void Application::CreateImageViews() {
 }
 
 void Application::CreateGraphicsPipeline() {
-    auto vertShaderCode = FileReader::GetInstance().ReadShaderFile("Shaders/SimpleVertex.spv");
-    auto fragShaderCode = FileReader::GetInstance().ReadShaderFile("Shaders/SimpleFragment.spv");
+    auto vertShaderCode = FileReader::GetInstance().ReadShaderFile("VertexShader");
+    auto fragShaderCode = FileReader::GetInstance().ReadShaderFile("FragShader");
 
     VkShaderModule vertShaderModule = CreateShaderModule(vertShaderCode);
     VkShaderModule fragShaderModule = CreateShaderModule(fragShaderCode);
