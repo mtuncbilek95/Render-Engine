@@ -340,9 +340,9 @@ void Application::CreateGraphicsPipeline() {
     VkPipelineViewportStateCreateInfo viewportCreateInfo{};
     viewportCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
     viewportCreateInfo.viewportCount = 1;
-    viewportCreateInfo.pScissors = &scissor;
+    //viewportCreateInfo.pScissors = &scissor;
     viewportCreateInfo.scissorCount = 1;
-    viewportCreateInfo.pViewports = &viewport;
+    //viewportCreateInfo.pViewports = &viewport;
 
     VkPipelineRasterizationStateCreateInfo rasterizerCreateInfo{};
     rasterizerCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
@@ -576,7 +576,7 @@ void Application::DrawFrame() {
     vkQueuePresentKHR(m_PresentQueue, &presentInfo);
 }
 
-std::vector<const char *> Application::GetRequiredExtensions() {
+std::vector<const char *> Application:: GetRequiredExtensions() {
     uint32_t glfwExtensionCount{};
     const char **glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
 
