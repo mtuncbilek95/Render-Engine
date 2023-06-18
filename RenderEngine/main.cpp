@@ -1,4 +1,4 @@
-#include <Application/Application.hpp>
+#include "ApplicationModule/Application.hpp"
 
 int main(int argc, char** argv) {
     Application app({ 1600, 900 });

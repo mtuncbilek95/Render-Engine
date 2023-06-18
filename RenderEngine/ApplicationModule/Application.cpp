@@ -1,7 +1,7 @@
 #include "Application.hpp"
 
-#include <ValidationLayer/ValidationLayer.hpp>
-#include <FileReader/FileReader.hpp>
+#include "ValidationLayer/ValidationLayer.hpp"
+#include "FileReader/FileReader.hpp"
 
 #include <iostream>
 #include <set>
